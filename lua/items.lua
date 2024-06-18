@@ -27,7 +27,7 @@ function show_stats_dialog(item_img, details_obj, btn1_text, btn2_text)
         end
     end
 
-    return gui.show_dialog(wml.get_child(wml.load("~add-ons/Frost_Mage/gui/item_stats.cfg"), "resolution"), preshow, function() end)
+    return gui.show_dialog(wml.get_child(wml.load("~add-ons/WISh/gui/item_stats.cfg"), "resolution"), preshow, function() end)
 end
 
 -- custom tag for placing items in a map
