@@ -1,12 +1,21 @@
--- given object, return a nicely formatted string describing it
+--Global lookup table
+--First column: id of type, Second column: descriptive name
+ITEM_TYPES = {}
+ITEM_TYPES[0] = {"weapon", "Weapon"}
+ITEM_TYPES[1] = {"armor", "Armor"}
+ITEM_TYPES[2] = {"trinket", "Trinket"}
+ITEM_TYPES[3] = {"amulet", "Amulet"}
+---------------------------------------------------------------
+
+-- given object, return a string nicely formatted with pango markup describing it
 function format_object(object)
     local formatted_text
     formatted_text =
-        "<span foreground='yellow'><big>"
-        ..object['name']
-        .."</big></span>\n<i>"
-        ..object['description']
-        .."</i>"
+    "<span foreground='yellow'><big>"
+    ..object['name']
+    .."</big></span>\n<i>"
+    ..object['description']
+    .."</i>"
     return formatted_text
 end
 
@@ -26,10 +35,116 @@ function show_stats_dialog(item_img, details_obj, btn1_text, btn2_text)
             btn2.label = btn2_text
         end
     end
-
+    
     return gui.show_dialog(wml.get_child(wml.load("~add-ons/WISh/gui/item_stats.cfg"), "resolution"), preshow, function() end)
 end
 
+-- get item from storage
+-- item is removed from storage once this is called
+function get_item_from_storage(item_type, item_num, remove)
+    var_name = 'stored_'..item_type..'s['..item_num..']'
+    --item_obj = wml.variables[var_name][1][2]
+    gui.alert(var_name)
+    gui.alert(wesnoth.as_text(wml.variables[var_name]))
+    item_obj = wml.variables[var_name..'.object']
+    if remove then
+        wesnoth.wml_actions.clear_variable{name = var_name}
+    end
+    return item_obj
+end
+
+-- handler for item equip from storage
+function equip(curr_unit, item_type, item)
+    if item ~= nil then
+        curr_unit:add_modification("object", item)
+        curr_unit.variables[item_type..'.object'] = item
+        if curr_unit.variables['has_item'] == false or curr_unit.variables['has_item'] == nil then
+            curr_unit.variables['has_item'] = true
+        end
+    end
+end
+
+-- drop an item, half of the work is done in wml
+function drop(item, type)
+    if item ~= nil then
+        wml.variables['drop'] = true
+        wml.variables['drop_item'] = item
+        wml.variables['drop_item_type'] = type
+    end
+end
+
+----------------------------------------------------------
+-- Inventory preshow method
+function inventory_init(dialog)
+    -- Storage --
+    -- Initialize treeview
+    local root_node = dialog:find("storage_list")
+    local nodes = {}
+    for i=0,3 do
+        nodes[i] = root_node:add_item_of_type("category")
+        nodes[i].item_name.label = ITEM_TYPES[i][2]
+        nodes[i].unfolded = true
+    end
+
+    -- Add items to the treeview
+    for i=0,3 do
+        local len = wml.variables['stored_'..ITEM_TYPES[i][1]..'s.length']
+        for j=0,len-1 do
+            local node = nodes[i]:add_item_of_type("item")
+            node.item_name.label = wml.variables['stored_'..ITEM_TYPES[i][1]..'s['..j..'].object.name']
+        end
+    end
+    
+    -- Show Equipped Items --
+    local curr_unit = wesnoth.units.find_on_map{
+        x = wml.variables['x1'],
+        y = wml.variables['y1']
+    }[1]
+
+    imgs = {}
+    items = {}
+    if curr_unit.variables.has_item then
+        for i=0,3 do
+            if curr_unit.variables[ITEM_TYPES[i][1]] ~= nil then
+                imgs[i] = dialog:find(ITEM_TYPES[i][1])
+                items[i] = curr_unit.variables[ITEM_TYPES[i][1]][1][2]
+                imgs[i].label = items[i].image.."~BLIT(misc/achievement-frames/frame-6-royal.png)"
+                dialog:find(ITEM_TYPES[i][1].."_btn").on_button_click = function()
+                    show_stats_dialog(weapon.image, weapon, "Unequip", "Drop")
+                end
+            end
+        end
+    end
+
+    local storage_list = dialog:find("storage_list")
+
+    -- Inventory Show Button
+    local inventory_show = dialog:find("inv_show")
+    inventory_show.on_button_click = function()
+        local node_id = storage_list.selected_item_path[1]-1
+        local node_name = ITEM_TYPES[node_id][1]
+        local subnode_id = storage_list.selected_item_path[2]-1
+        gui.alert(subnode_id)
+        local item_obj = get_item_from_storage(node_name, subnode_id, true)
+        local status = show_stats_dialog(item_obj.image, item_obj, "Equip", "Drop")
+        nodes[node_id]:remove_items_at(subnode_id, 1)
+        if status == 3 then
+            drop(item_obj, node_name)
+        elseif status == 1 then
+            equip(curr_unit, node_name, item_obj)
+        end
+        dialog:close()
+    end
+
+end
+
+-- Show the inventory
+function show_inventory()
+    gui.show_dialog(wml.get_child(wml.load("~add-ons/WISh/gui/inventory.cfg"), "resolution"), inventory_init, function() end)
+end
+
+----------------------------------------------------------
+-- WIP
 -- custom tag for placing items in a map
 function wesnoth.wml_actions.put_item(cfg)
     wesnoth.interface.add_item_image(cfg.x, cfg.y, cfg.image)
