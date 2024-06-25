@@ -1,10 +1,10 @@
 --Global lookup table
 --First column: id of type, Second column: descriptive name
 ITEM_TYPES = {}
-ITEM_TYPES[0] = {"weapon", "Weapon"}
-ITEM_TYPES[1] = {"armor", "Armor"}
-ITEM_TYPES[2] = {"trinket", "Trinket"}
-ITEM_TYPES[3] = {"amulet", "Amulet"}
+ITEM_TYPES[0] = {"weapon", "Weapon", "misc/achievement-frames/frame-6-royal.png"}
+ITEM_TYPES[1] = {"armor", "Armor", "misc/achievement-frames/frame-2-orange.png"}
+ITEM_TYPES[2] = {"trinket", "Trinket", "misc/achievement-frames/frame-4-sky.png"}
+ITEM_TYPES[3] = {"amulet", "Amulet", "misc/achievement-frames/frame-3-jade.png"}
 ---------------------------------------------------------------
 
 -- given object, return a string nicely formatted with pango markup describing it
@@ -53,7 +53,19 @@ function get_item_from_storage(item_type, item_num, remove)
     return item_obj
 end
 
--- handler for item equip from storage
+-- get item from unit
+function get_item_from_unit(curr_unit, item_type, remove)
+    var_name = item_type..'.object'
+    item = curr_unit.variables[var_name]
+    if remove then
+        wesnoth.wml_actions.clear_variable{name = curr_unit.id..'.variables.'..var_name}
+        curr_unit:remove_modifications({id = item.id})
+    end
+    return item
+end
+
+
+-- handler for item equip
 function equip(curr_unit, item_type, item)
     if item ~= nil then
         curr_unit:add_modification("object", item)
@@ -108,9 +120,17 @@ function inventory_init(dialog)
             if curr_unit.variables[ITEM_TYPES[i][1]] ~= nil then
                 imgs[i] = dialog:find(ITEM_TYPES[i][1])
                 items[i] = curr_unit.variables[ITEM_TYPES[i][1]][1][2]
-                imgs[i].label = items[i].image.."~BLIT(misc/achievement-frames/frame-6-royal.png)"
+                imgs[i].label = items[i].image.."~BLIT("..ITEM_TYPES[i][3]..")"
                 dialog:find(ITEM_TYPES[i][1].."_btn").on_button_click = function()
-                    show_stats_dialog(weapon.image, weapon, "Unequip", "Drop")
+                    local status = show_stats_dialog(items[i].image, items[i], "Unequip", "Drop")
+                    if status == 1 then
+                        local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
+                        imgs[i].label = ITEM_TYPES[i][3]
+                    elseif status == 3 then
+                        local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
+                        drop(item, ITEM_TYPES[i][1])
+                        imgs[i].label = ITEM_TYPES[i][3]
+                    end
                 end
             end
         end
