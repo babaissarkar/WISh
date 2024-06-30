@@ -43,9 +43,6 @@ end
 -- item is removed from storage once this is called
 function get_item_from_storage(item_type, item_num, remove)
     var_name = 'stored_'..item_type..'s['..item_num..']'
-    --item_obj = wml.variables[var_name][1][2]
-    gui.alert(var_name)
-    gui.alert(wesnoth.as_text(wml.variables[var_name]))
     item_obj = wml.variables[var_name..'.object']
     if remove then
         wesnoth.wml_actions.clear_variable{name = var_name}
@@ -64,6 +61,15 @@ function get_item_from_unit(curr_unit, item_type, remove)
     return item
 end
 
+-- add an item to the storage
+function add_item_to_storage(item_type, item)
+    var_name = 'stored_'..item_type..'s'
+    wesnoth.wml_actions.set_variables{
+        name = var_name,
+        mode = "append",
+        wml.tag.value{wml.tag.object(item)}
+    }
+end
 
 -- handler for item equip
 function equip(curr_unit, item_type, item)
@@ -84,6 +90,8 @@ function drop(item, type)
         wml.variables['drop_item_type'] = type
     end
 end
+
+-- TODO function to check if an unit has item
 
 ----------------------------------------------------------
 -- Inventory preshow method
@@ -126,6 +134,7 @@ function inventory_init(dialog)
                     if status == 1 then
                         local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
                         imgs[i].label = ITEM_TYPES[i][3]
+                        add_item_to_storage(ITEM_TYPES[i][1], item)
                     elseif status == 3 then
                         local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
                         drop(item, ITEM_TYPES[i][1])
@@ -144,7 +153,6 @@ function inventory_init(dialog)
         local node_id = storage_list.selected_item_path[1]-1
         local node_name = ITEM_TYPES[node_id][1]
         local subnode_id = storage_list.selected_item_path[2]-1
-        gui.alert(subnode_id)
         local item_obj = get_item_from_storage(node_name, subnode_id, true)
         local status = show_stats_dialog(item_obj.image, item_obj, "Equip", "Drop")
         nodes[node_id]:remove_items_at(subnode_id, 1)
