@@ -50,12 +50,17 @@ function get_item_from_storage(item_type, item_num, remove)
     return item_obj
 end
 
+-- wrapper for removing an item from storage
+function remove_from_storage(item_type, item_num)
+    get_item_from_storage(item_type, item_num, true)
+end
+
 -- get item from unit
 function get_item_from_unit(curr_unit, item_type, remove)
     var_name = item_type..'.object'
     item = curr_unit.variables[var_name]
     if remove then
-        wesnoth.wml_actions.clear_variable{name = curr_unit.id..'.variables.'..var_name}
+        curr_unit.variables[item_type] = nil
         curr_unit:remove_modifications({id = item.id})
     end
     return item
@@ -121,11 +126,12 @@ function inventory_init(dialog)
         y = wml.variables['y1']
     }[1]
 
-    imgs = {}
-    items = {}
+    local imgs = {}
+    local items = {}
     if curr_unit.variables.has_item then
         for i=0,3 do
             if curr_unit.variables[ITEM_TYPES[i][1]] ~= nil then
+                gui.alert(wml.tostring(curr_unit.variables[ITEM_TYPES[i][1]]))
                 imgs[i] = dialog:find(ITEM_TYPES[i][1])
                 items[i] = curr_unit.variables[ITEM_TYPES[i][1]][1][2]
                 imgs[i].label = items[i].image.."~BLIT("..ITEM_TYPES[i][3]..")"
@@ -140,6 +146,7 @@ function inventory_init(dialog)
                         drop(item, ITEM_TYPES[i][1])
                         imgs[i].label = ITEM_TYPES[i][3]
                     end
+                    items[i] = nil
                 end
             end
         end
@@ -153,12 +160,15 @@ function inventory_init(dialog)
         local node_id = storage_list.selected_item_path[1]-1
         local node_name = ITEM_TYPES[node_id][1]
         local subnode_id = storage_list.selected_item_path[2]-1
-        local item_obj = get_item_from_storage(node_name, subnode_id, true)
+        local item_obj = get_item_from_storage(node_name, subnode_id, false)
         local status = show_stats_dialog(item_obj.image, item_obj, "Equip", "Drop")
-        nodes[node_id]:remove_items_at(subnode_id, 1)
         if status == 3 then
+            remove_from_storage(node_name, subnode_id)
+            nodes[node_id]:remove_items_at(subnode_id, 1)
             drop(item_obj, node_name)
         elseif status == 1 then
+            remove_from_storage(node_name, subnode_id)
+            nodes[node_id]:remove_items_at(subnode_id, 1)
             equip(curr_unit, node_name, item_obj)
         end
         dialog:close()
