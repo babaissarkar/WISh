@@ -81,9 +81,6 @@ function equip(curr_unit, item_type, item)
     if item ~= nil then
         curr_unit:add_modification("object", item)
         curr_unit.variables[item_type..'.object'] = item
-        if curr_unit.variables['has_item'] == false or curr_unit.variables['has_item'] == nil then
-            curr_unit.variables['has_item'] = true
-        end
     end
 end
 
@@ -96,10 +93,20 @@ function drop(item, type)
     end
 end
 
--- TODO function to check if an unit has item
+-- function to check if an unit has item
+function check_has_item(curr_unit)
+    local has_item = false
+    for i=0,3 do
+        if get_item_from_unit(curr_unit, ITEM_TYPES[i][1], false) ~= nil then
+            has_item = true
+        end
+    end
+    return has_item
+end
 
-----------------------------------------------------------
+--------------------------------------------------------------
 -- Inventory preshow method
+-- accessed via the "Inventory" menu item
 function inventory_init(dialog)
     -- Storage --
     -- Initialize treeview
@@ -128,10 +135,9 @@ function inventory_init(dialog)
 
     local imgs = {}
     local items = {}
-    if curr_unit.variables.has_item then
+    if check_has_item(curr_unit) then
         for i=0,3 do
             if curr_unit.variables[ITEM_TYPES[i][1]] ~= nil then
-                gui.alert(wml.tostring(curr_unit.variables[ITEM_TYPES[i][1]]))
                 imgs[i] = dialog:find(ITEM_TYPES[i][1])
                 items[i] = curr_unit.variables[ITEM_TYPES[i][1]][1][2]
                 imgs[i].label = items[i].image.."~BLIT("..ITEM_TYPES[i][3]..")"
