@@ -20,7 +20,7 @@ function format_object(object)
 end
 
 -- show the stats of a given item object in a gui
-function show_stats_dialog(item_img, details_obj, btn1_text, btn2_text)
+function show_stats_dialog(item_img, details_obj, btn1_text, btn2_text, btn3_text)
     local preshow = function(dialog)
         local details = dialog:find('details')
         details.label = format_object(details_obj)
@@ -33,6 +33,10 @@ function show_stats_dialog(item_img, details_obj, btn1_text, btn2_text)
         if btn2_text ~= nil then
             local btn2 = dialog:find('btn2')
             btn2.label = btn2_text
+        end
+        if btn3_text ~= nil then
+            local btn3 = dialog:find('btn3')
+            btn3.label = btn3_text
         end
     end
     
@@ -142,7 +146,7 @@ function inventory_init(dialog)
                 items[i] = curr_unit.variables[ITEM_TYPES[i][1]][1][2]
                 imgs[i].label = items[i].image.."~BLIT("..ITEM_TYPES[i][3]..")"
                 dialog:find(ITEM_TYPES[i][1].."_btn").on_button_click = function()
-                    local status = show_stats_dialog(items[i].image, items[i], "Unequip", "Drop")
+                    local status = show_stats_dialog(items[i].image, items[i], "Unequip", "Drop", nil)
                     if status == 1 then
                         local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
                         imgs[i].label = ITEM_TYPES[i][3]
@@ -167,7 +171,7 @@ function inventory_init(dialog)
         local node_name = ITEM_TYPES[node_id][1]
         local subnode_id = storage_list.selected_item_path[2]-1
         local item_obj = get_item_from_storage(node_name, subnode_id, false)
-        local status = show_stats_dialog(item_obj.image, item_obj, "Equip", "Drop")
+        local status = show_stats_dialog(item_obj.image, item_obj, "Equip", "Drop", nil)
         if status == 3 then
             remove_from_storage(node_name, subnode_id)
             nodes[node_id]:remove_items_at(subnode_id, 1)
