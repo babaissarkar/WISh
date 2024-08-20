@@ -5,6 +5,13 @@ ITEM_TYPES[0] = {"weapon", "Weapon", "misc/achievement-frames/frame-6-royal.png"
 ITEM_TYPES[1] = {"armor", "Armor", "misc/achievement-frames/frame-2-orange.png"}
 ITEM_TYPES[2] = {"trinket", "Trinket", "misc/achievement-frames/frame-4-sky.png"}
 ITEM_TYPES[3] = {"amulet", "Amulet", "misc/achievement-frames/frame-3-jade.png"}
+
+-- Equip trait
+EQUIP_TRAIT = {
+    id = "equiped",
+    name = "equiped",
+    description = "item: "
+}
 ---------------------------------------------------------------
 
 -- given object, return a string nicely formatted with pango markup describing it
@@ -84,6 +91,9 @@ end
 function equip(curr_unit, item_type, item)
     if item ~= nil then
         curr_unit:add_modification("object", item)
+        local trait = EQUIP_TRAIT
+        trait.description = EQUIP_TRAIT.description..item.id
+        curr_unit:add_modification("trait", EQUIP_TRAIT, true)
         curr_unit.variables[item_type..'.object'] = item
     end
 end
