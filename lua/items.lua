@@ -8,9 +8,9 @@ ITEM_TYPES[3] = {"amulet", "Amulet", "misc/achievement-frames/frame-3-jade.png"}
 
 -- Equip trait
 EQUIP_TRAIT = {
-    id = "equiped",
-    name = "equiped",
-    description = "item: "
+    id = "equipped",
+    name = "equipped",
+    description = "Item: "
 }
 ---------------------------------------------------------------
 
@@ -33,6 +33,7 @@ function show_stats_dialog(item_img, details_obj, btn1_text, btn2_text, btn3_tex
         details.label = format_object(details_obj)
         local image = dialog:find('image')
         image.label = item_img.."~BLIT(misc/achievement-frames/frame-9-red.png)"
+
         if btn1_text ~= nil then
             local btn1 = dialog:find('btn1')
             btn1.label = btn1_text
@@ -92,7 +93,7 @@ function equip(curr_unit, item_type, item)
     if item ~= nil then
         curr_unit:add_modification("object", item)
         local trait = EQUIP_TRAIT
-        trait.description = EQUIP_TRAIT.description..item.id
+        trait.description = EQUIP_TRAIT.description..item.name
         curr_unit:add_modification("trait", EQUIP_TRAIT, true)
         curr_unit.variables[item_type..'.object'] = item
     end
