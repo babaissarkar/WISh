@@ -12,6 +12,10 @@ EQUIP_TRAIT = {
     name = "equipped",
     description = "Item: "
 }
+
+-- Item locked message
+LOCK_TITLE = "<span face='OldaniaADFStd' color='#ff00ff'><big>Can't Remove!</big></span>"
+LOCK_MSG = "This item is <i>locked</i> and cannot be removed normally!"
 ---------------------------------------------------------------
 
 -- given object, return a string nicely formatted with pango markup describing it
@@ -159,20 +163,30 @@ function inventory_init(dialog)
                 dialog:find(ITEM_TYPES[i][1].."_btn").on_button_click = function()
                     local status = show_stats_dialog(items[i].image, items[i], "Unequip", "Drop", nil)
                     if status == 1 then
-                        if (get_item_from_unit(curr_unit, ITEM_TYPES[i][1], false).cursed ~= true) then
+                        local item_readonly = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], false)
+                        if (item_readonly.locked ~= true) then
                             local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
                             imgs[i].label = ITEM_TYPES[i][3]
                             add_item_to_storage(ITEM_TYPES[i][1], item)
                         else
-                            gui.show_popup("<span face='OldaniaADFStd' color='#ff00ff'><big>Can't Remove!</big></span>", "This item is <i>cursed</i> and cannot be removed normally!")
+                            if (item_readonly.lock_msg ~= nil) then
+                                gui.show_popup(LOCK_TITLE, item_readonly.lock_msg)
+                            else
+                                gui.show_popup(LOCK_TITLE, LOCK_MSG)
+                            end
                         end
                     elseif status == 3 then
-                        if (get_item_from_unit(curr_unit, ITEM_TYPES[i][1], false).cursed ~= true) then
+                        local item_readonly = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], false)
+                        if (item_readonly.locked ~= true) then
                             local item = get_item_from_unit(curr_unit, ITEM_TYPES[i][1], true)
-                            drop(item, ITEM_TYPES[i][1])
                             imgs[i].label = ITEM_TYPES[i][3]
+                            drop(item, ITEM_TYPES[i][1])
                         else
-                            gui.show_popup("<span face='OldaniaADFStd' color='#ff00ff'><big>Can't Remove!</big></span>", "This item is <i>cursed</i> and cannot be removed normally!")
+                            if (item_readonly.lock_msg ~= nil) then
+                                gui.show_popup(LOCK_TITLE, item_readonly.lock_msg)
+                            else
+                                gui.show_popup(LOCK_TITLE, LOCK_MSG)
+                            end
                         end
                     end
                     items[i] = nil
