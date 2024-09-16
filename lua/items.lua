@@ -250,7 +250,11 @@ function inventory_init(dialog)
             remove_from_storage(node_name, subnode_id)
             nodes[node_id]:remove_items_at(subnode_id, 1)
             local cost = item_obj.gold_value
+            -- this adds the gold to the side gold amount
             wesnoth.sides.get(curr_unit.side).gold = wesnoth.sides.get(curr_unit.side).gold + cost
+            -- play sound to give audible cue
+            wesnoth.audio.play("gold.ogg")
+            -- we give feedback to the user on what has been done
             wesnoth.interface.add_chat_message("WISh", "Item "..item_obj.name.." sold for "..cost.." gold.")
         end
         dialog:close()
