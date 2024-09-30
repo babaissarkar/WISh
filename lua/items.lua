@@ -165,6 +165,9 @@ function inventory_init(dialog)
         x = wml.variables['x1'],
         y = wml.variables['y1']
     }[1]
+
+    -- Set name and type of unit
+    dialog:find("unit_name").label = "<span size='x-large' face='Serif'>"..curr_unit.name.."</span><span face='OldaniaADFStd' size='x-large'> ("..curr_unit.type..")".."</span>"
     
     local imgs = {}
     local items = {}
