@@ -92,6 +92,10 @@ function get_item_from_unit(curr_unit, item_type, remove)
     if remove then
         curr_unit.variables[item_type] = nil
         curr_unit:remove_modifications({id = item.id})
+        -- check if any other items exist, if not, remove trait
+        if (check_has_item(curr_unit) == false) then
+            curr_unit:remove_modifications({id = "equipped"}, "trait")
+        end
     end
     return item
 end
@@ -117,7 +121,7 @@ function equip(curr_unit, item_type, item)
     end
 end
 
--- drop an item, half of the work is done in wml
+-- drop an item, rest of the work is done in wml
 function drop(item, type)
     if item ~= nil then
         wml.variables['drop'] = true
@@ -130,7 +134,7 @@ end
 function check_has_item(curr_unit)
     local has_item = false
     for i=0,3 do
-        if get_item_from_unit(curr_unit, ITEM_TYPES[i][1], false) ~= nil then
+        if curr_unit.variables[ITEM_TYPES[i][1]..'.object'] ~= nil then
             has_item = true
         end
     end
@@ -140,6 +144,8 @@ end
 --------------------------------------------------------------
 -- Inventory preshow method
 -- accessed via the "Inventory" menu item
+--------------------------------------------------------------
+
 function inventory_init(dialog)
     -- Storage --
     -- Initialize treeview
