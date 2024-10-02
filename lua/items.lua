@@ -158,8 +158,10 @@ function inventory_init(dialog)
     end
     
     -- Add items to the treeview
+    items_count = 0
     for i=0,3 do
         local len = wml.variables['stored_'..ITEM_TYPES[i][1]..'s.length']
+        items_count = items_count + len
         for j=0,len-1 do
             local node = nodes[i]:add_item_of_type("item")
             node.item_name.label = wml.variables['stored_'..ITEM_TYPES[i][1]..'s['..j..'].object.name']
@@ -237,14 +239,25 @@ function inventory_init(dialog)
         end
     end
     
-    local storage_list = dialog:find("storage_list")
-    
-    -- Inventory Show Button
+    -- Inventory Show Button handling
     local inventory_show = dialog:find("inv_show")
+    local storage_list = dialog:find("storage_list")
+
+    -- disable by default, only enable on valid selection
+    inventory_show.enabled = false
+    storage_list.on_modified = function()
+        inventory_show.enabled = (storage_list.selected_item_path[2] ~= nil) and (items_count ~= 0)
+    end
+
     inventory_show.on_button_click = function()
         local node_id = storage_list.selected_item_path[1]-1
+        local sel_subnode_id = storage_list.selected_item_path[2]
+        if sel_subnode_id == nil then
+            return
+        end
+
         local node_name = ITEM_TYPES[node_id][1]
-        local subnode_id = storage_list.selected_item_path[2]-1
+        local subnode_id = sel_subnode_id-1
         local item_obj = get_item_from_storage(node_name, subnode_id, false)
         local status = show_stats_dialog(item_obj, "Equip", "Drop", nil, true)
         if status == 3 then
