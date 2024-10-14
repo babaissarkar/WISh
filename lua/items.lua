@@ -127,7 +127,6 @@ function drop(item, type)
         wml.variables['drop'] = true
         wml.variables['drop_item'] = item
         wml.variables['drop_item_type'] = type
-        gui.alert(wml.tostring(item))
     end
 end
 
