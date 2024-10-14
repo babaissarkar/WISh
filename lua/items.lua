@@ -127,6 +127,7 @@ function drop(item, type)
         wml.variables['drop'] = true
         wml.variables['drop_item'] = item
         wml.variables['drop_item_type'] = type
+        gui.alert(wml.tostring(item))
     end
 end
 
@@ -260,17 +261,16 @@ function inventory_init(dialog)
         local subnode_id = sel_subnode_id-1
         local item_obj = get_item_from_storage(node_name, subnode_id, false)
         local status = show_stats_dialog(item_obj, "Equip", "Drop", nil, true)
-        if status == 3 then
+        if status ~= 2 then
             remove_from_storage(node_name, subnode_id)
             nodes[node_id]:remove_items_at(subnode_id, 1)
+        end
+
+        if status == 3 then
             drop(item_obj, node_name)
         elseif status == 1 then
-            remove_from_storage(node_name, subnode_id)
-            nodes[node_id]:remove_items_at(subnode_id, 1)
             equip(curr_unit, node_name, item_obj)
         elseif status == 4 then
-            remove_from_storage(node_name, subnode_id)
-            nodes[node_id]:remove_items_at(subnode_id, 1)
             local cost = item_obj.gold_value
             -- this adds the gold to the side gold amount
             wesnoth.sides.get(curr_unit.side).gold = wesnoth.sides.get(curr_unit.side).gold + cost
