@@ -20,20 +20,20 @@ LOCK_MSG = "This item is <i>locked</i> and cannot be removed normally!"
 
 -- given object, return a formatted string describing it
 function format_object(object)
-    local formatted_text
-    formatted_text =
-    "<span foreground='yellow'><big>"
-    ..object['name']
-    .."</big></span>\n<i>"
-    ..object['description']
-    .."</i>\n"
+    gui.alert(wml.tostring(object))
+    local formatted_text =
+        "<span foreground='yellow'><big>"
+        ..object['name']
+        .."</big></span>\n<i>"
+        ..object['description']
+        .."</i>\n"
     
     if (object['gold_value'] ~= nil) then
         formatted_text =
-        formatted_text
-        .."Value: "
-        ..object['gold_value']
-        .." gold"
+            formatted_text
+            .."Value: "
+            ..object['gold_value']
+            .." gold"
     end
     return formatted_text
 end
