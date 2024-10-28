@@ -20,7 +20,6 @@ LOCK_MSG = "This item is <i>locked</i> and cannot be removed normally!"
 
 -- given object, return a formatted string describing it
 function format_object(object)
-    gui.alert(wml.tostring(object))
     local formatted_text =
         "<span foreground='yellow'><big>"
         ..object['name']
@@ -302,7 +301,7 @@ function wesnoth.wml_actions.put_item(cfg)
         first_time_only = false,
         filter = child,
         action = function()
-            gui.alert(wesnoth.as_text(child))
+            --gui.alert(wesnoth.as_text(child))
         end
     }
 end
