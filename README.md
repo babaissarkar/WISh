@@ -79,3 +79,11 @@ OBJECT is an extended version of the `[object]` from core, namely it supports th
 
 # Inventory
 Accessible via **Right click on unit > Inventory** if the unit has an item equipped.
+
+# Screenshots
+
+![Image 1](https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:exlwxcktqkgj7bawgy2muzmg/bafkreiezvh7oixrmbn6ls7gvxoi3z5fdmpaii6j6qrbdtd2qc35233ztdu@jpeg)
+
+![Image 2](https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:exlwxcktqkgj7bawgy2muzmg/bafkreiejyrgxjbj7bmig4sbw6gvzbq4k6k6jk3rrepd5z4yzqr2jxrfmlq@jpeg)
+
+![Image 3](https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:exlwxcktqkgj7bawgy2muzmg/bafkreihalt26ravo7w3nmfpmhcbaiwjwfvbtwvg4xeq3axi73e25r2bgeq@jpeg)
