@@ -1,6 +1,6 @@
 # WISh
 
-A GUI item inventory system for [War of Legends era](https://github.com/knyghtmare/War_of_Legends) (An addon for [The Battle for Wesnoth](https://www.wesnoth.org/).)
+A GUI item inventory system for [War of Legends era](https://github.com/knyghtmare/War_of_Legends) (An addon for [The Battle for Wesnoth](https://www.wesnoth.org/)).
 
 # Usage
 
@@ -68,14 +68,13 @@ Next step is loading the resource:
     ) 
     (TYPE=trinket)}
 ```
-
-OBJECT is an extended version of the `[object]` from core, namely it supports the following additional keys and tags:
-* **locked**: boolean, when `true`, the item cannot be unequipped or sold or remove in anyway except by the unit dying.
-* **lock_msg**: string, the message shown when trying to remove a locked item.
-* **gold_value**: Cost of the item, i.e., the gold you get when you sell this item.
-* subtag **[filter]**: Only units satisfying the condition can pickup this `[object]`.
-* Please note `TYPE=` can be any 4 values: weapon, armor, trinket, amulet
-* We have no further plans on expanding the `TYPE=` value list.
+* **OBJECT** is an extended version of the `[object]` from core, namely it supports the following additional keys and tags:
+    * **locked**: boolean, when `true`, the item cannot be unequipped or sold or remove in anyway except by the unit dying.
+    * **lock_msg**: string, the message shown when trying to remove a locked item.
+    * **gold_value**: Cost of the item, i.e., the gold you get when you sell this item.
+    * subtag **[filter]**: Only units satisfying the condition can pickup this `[object]`.
+* **TYPE**: Optional macro argument specifying the type of the equipment. An unit can only have one item of each type at a time. Please note `TYPE` can be any 4 values: `weapon` (default if not specified), `armor`, `trinket`, `amulet`. We have _no further plans_ on expanding the `TYPE=` value list.
+* **TAKE_IT_STRING** and **LEAVE_IT_STRING**: Optional macro arguments that specify the caption text to be shown on the `Equip` and `Leave` buttons. Default values are (obviously) `Equip` and `Leave`.
 
 # Inventory
 Accessible via **Right click on unit > Inventory** if the unit has an item equipped.
