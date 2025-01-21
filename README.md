@@ -32,9 +32,11 @@ Next step is loading the resource:
 
 ## Scenario Files
 
+The main macro that places an item on map is:
 ```ini
 {WISH_ITEM_PICK_UP ID X Y CANNOT_PICKUP_MESSAGE IMAGE_SHOWN_IN_POPUP OBJECT_WML TYPE=weapon TAKE_IT_STRING="Equip" LEAVE_IT_STRING="Leave"}
 ```
+Note that this _can only be used inside an event_.
 
 **Example code from Knyghtmare's SotBE rework project**
 ```ini
