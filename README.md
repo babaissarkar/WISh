@@ -77,7 +77,7 @@ Note that this _can only be used inside an event_.
     * subtag **[filter]**: Only units satisfying the condition can pickup this `[object]`.
 * **TYPE**: Optional macro argument specifying the type of the equipment. An unit can only have one item of each type at a time. Please note `TYPE` can be any 4 values: `weapon` (default if not specified), `armor`, `trinket`, `amulet`. We have _no further plans_ on expanding the `TYPE=` value list.
 * **TAKE_IT_STRING** and **LEAVE_IT_STRING**: Optional macro arguments that specify the caption text to be shown on the `Equip` and `Leave` buttons. Default values are (obviously) `Equip` and `Leave`.
-* **CONSUMABLE**: Optional boolean macro argument `(yes|no)`. If set, the item can be used/equipped only once and are used up upon equip. These items can be stored however.
+* **CONSUMABLE**: Optional boolean macro argument `(yes|no)`. If set, the item can be used/equipped only once and are used up upon equip. These items can be stored however. Default value is `no`.
 
 # Inventory
 Accessible via **Right click on unit > Inventory** if the unit has an item equipped.
