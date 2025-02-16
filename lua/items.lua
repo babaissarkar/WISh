@@ -26,7 +26,7 @@ function format_object(object)
         .."</big></span>\n<i>"
         ..object['description']
         .."</i>\n"
-    
+
     if (object['gold_value'] ~= nil) then
         formatted_text =
             formatted_text
@@ -45,12 +45,12 @@ function show_stats_dialog(details_obj, btn1_text, btn2_text, btn3_text, show_se
         elseif (show_sell == true) then
             dialog:find('btn4').visible = true
         end
-        
+
         local details = dialog:find('details')
         details.label = format_object(details_obj)
         local image = dialog:find('image')
         image.label = details_obj.image.."~BLIT(misc/achievement-frames/frame-9-red.png)"
-        
+
         if btn1_text ~= nil then
             local btn1 = dialog:find('btn1')
             btn1.label = btn1_text
@@ -64,7 +64,7 @@ function show_stats_dialog(details_obj, btn1_text, btn2_text, btn3_text, show_se
             btn3.label = btn3_text
         end
     end
-    
+
     return gui.show_dialog(wml.get_child(wml.load("~add-ons/WISh/gui/item_stats.cfg"), "resolution"), preshow, function() end)
 end
 
@@ -155,7 +155,7 @@ function inventory_init(dialog)
         nodes[i].item_name.label = ITEM_TYPES[i][2]
         nodes[i].unfolded = true
     end
-    
+
     -- Add items to the treeview
     items_count = 0
     for i=0,3 do
@@ -166,7 +166,7 @@ function inventory_init(dialog)
             node.item_name.label = wml.variables['stored_'..ITEM_TYPES[i][1]..'s['..j..'].object.name']
         end
     end
-    
+
     -- Show Equipped Items --
     local curr_unit = wesnoth.units.find_on_map{
         x = wml.variables['x1'],
@@ -175,7 +175,7 @@ function inventory_init(dialog)
 
     -- Set name and type of unit
     dialog:find("unit_name").label = "<span size='x-large' face='Serif'>"..curr_unit.name.."</span><span face='OldaniaADFStd' size='x-large'> ("..curr_unit.type..")".."</span>"
-    
+
     local imgs = {}
     local items = {}
     if check_has_item(curr_unit) then
@@ -237,7 +237,7 @@ function inventory_init(dialog)
             end
         end
     end
-    
+
     -- Inventory Show Button handling
     local inventory_show = dialog:find("inv_show")
     local storage_list = dialog:find("storage_list")
@@ -261,7 +261,7 @@ function inventory_init(dialog)
         local status = show_stats_dialog(item_obj, "Equip", "Drop", nil, true)
         if status ~= 2 then
             remove_from_storage(node_name, subnode_id)
-            nodes[node_id]:remove_items_at(subnode_id, 1)
+            nodes[node_id]:remove_items_at(sel_subnode_id, 1)
         end
 
         if status == 3 then
@@ -279,7 +279,7 @@ function inventory_init(dialog)
         end
         dialog:close()
     end
-    
+
 end
 
 -- Show the inventory
