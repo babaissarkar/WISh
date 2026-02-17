@@ -293,8 +293,35 @@ function inventory_init(dialog)
 
 end
 
+-- check if unit can access inventory this turn (must not have moved or attacked)
+function can_access_inventory(curr_unit)
+    if curr_unit == nil then
+        return false
+    end
+
+    local has_not_moved = (curr_unit.moves == curr_unit.max_moves)
+    local has_not_attacked = false
+    if curr_unit.max_attacks ~= nil then
+        has_not_attacked = (curr_unit.attacks_left == curr_unit.max_attacks)
+    else
+        has_not_attacked = (curr_unit.attacks_left > 0)
+    end
+
+    return has_not_moved and has_not_attacked
+end
+
 -- Show the inventory
 function show_inventory()
+    local curr_unit = wesnoth.units.find_on_map{
+        x = wml.variables['x1'],
+        y = wml.variables['y1']
+    }[1]
+
+    if not can_access_inventory(curr_unit) then
+        gui.show_popup("<span face='OldaniaADFStd' color='#ff00ff'><big>Can't Access Inventory!</big></span>", "This unit has already moved or attacked this turn.")
+        return
+    end
+
     gui.show_dialog(wml.get_child(wml.load("~add-ons/WISh/gui/inventory.cfg"), "resolution"), inventory_init, function() end)
 end
 
