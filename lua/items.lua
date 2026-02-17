@@ -304,7 +304,8 @@ function can_access_inventory(curr_unit)
     if curr_unit.max_attacks ~= nil then
         has_not_attacked = (curr_unit.attacks_left == curr_unit.max_attacks)
     else
-        has_not_attacked = (curr_unit.attacks_left > 0)
+        -- Some unit types/mod states may not expose max_attacks; do not block inventory on unknown attack cap.
+        has_not_attacked = true
     end
 
     return has_not_moved and has_not_attacked
