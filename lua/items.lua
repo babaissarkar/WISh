@@ -95,6 +95,7 @@ function get_item_from_unit(curr_unit, item_type, remove)
         if (check_has_item(curr_unit) == false) then
             curr_unit:remove_modifications({id = "equipped"}, "trait")
         end
+        consume_unit_turn(curr_unit)
     end
     return item
 end
@@ -117,6 +118,16 @@ function equip(curr_unit, item_type, item)
         trait.description = EQUIP_TRAIT.description..item.name
         curr_unit:add_modification("trait", EQUIP_TRAIT, true)
         curr_unit.variables[item_type..'.object'] = item
+        consume_unit_turn(curr_unit)
+    end
+end
+
+
+-- consume the acting unit's turn (no movement and no attacks left)
+function consume_unit_turn(curr_unit)
+    if curr_unit ~= nil then
+        curr_unit.moves = 0
+        curr_unit.attacks_left = 0
     end
 end
 
