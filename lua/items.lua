@@ -95,6 +95,7 @@ function get_item_from_unit(curr_unit, item_type, remove)
         if (check_has_item(curr_unit) == false) then
             curr_unit:remove_modifications({id = "equipped"}, "trait")
         end
+        consume_unit_turn(curr_unit)
     end
     return item
 end
@@ -117,6 +118,16 @@ function equip(curr_unit, item_type, item)
         trait.description = EQUIP_TRAIT.description..item.name
         curr_unit:add_modification("trait", EQUIP_TRAIT, true)
         curr_unit.variables[item_type..'.object'] = item
+        consume_unit_turn(curr_unit)
+    end
+end
+
+
+-- consume the acting unit's turn (no movement and no attacks left)
+function consume_unit_turn(curr_unit)
+    if curr_unit ~= nil then
+        curr_unit.moves = 0
+        curr_unit.attacks_left = 0
     end
 end
 
@@ -282,8 +293,36 @@ function inventory_init(dialog)
 
 end
 
+-- check if unit can access inventory this turn (must not have moved or attacked)
+function can_access_inventory(curr_unit)
+    if curr_unit == nil then
+        return false
+    end
+
+    local has_not_moved = (curr_unit.moves == curr_unit.max_moves)
+    local has_not_attacked = false
+    if curr_unit.max_attacks ~= nil then
+        has_not_attacked = (curr_unit.attacks_left == curr_unit.max_attacks)
+    else
+        -- Some unit types/mod states may not expose max_attacks; do not block inventory on unknown attack cap.
+        has_not_attacked = true
+    end
+
+    return has_not_moved and has_not_attacked
+end
+
 -- Show the inventory
 function show_inventory()
+    local curr_unit = wesnoth.units.find_on_map{
+        x = wml.variables['x1'],
+        y = wml.variables['y1']
+    }[1]
+
+    if not can_access_inventory(curr_unit) then
+        gui.show_popup("<span face='OldaniaADFStd' color='#ff00ff'><big>Can't Access Inventory!</big></span>", "This unit has already moved or attacked this turn.")
+        return
+    end
+
     gui.show_dialog(wml.get_child(wml.load("~add-ons/WISh/gui/inventory.cfg"), "resolution"), inventory_init, function() end)
 end
 
