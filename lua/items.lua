@@ -1,10 +1,11 @@
 --Global lookup table
---First column: id of type, Second column: descriptive name
-ITEM_TYPES = {}
-ITEM_TYPES[0] = {"weapon", "Weapon", "misc/achievement-frames/frame-6-royal.png"}
-ITEM_TYPES[1] = {"armor", "Armor", "misc/achievement-frames/frame-2-orange.png"}
-ITEM_TYPES[2] = {"trinket", "Trinket", "misc/achievement-frames/frame-4-sky.png"}
-ITEM_TYPES[3] = {"amulet", "Amulet", "misc/achievement-frames/frame-3-jade.png"}
+--First column: id of type, Second column: descriptive name, Third column: corresponding frame
+ITEM_TYPES = {
+    [0] = {"weapon",  "Weapon",  "misc/achievement-frames/frame-6-royal.png"},
+    [1] = {"armor",   "Armor",   "misc/achievement-frames/frame-2-orange.png"},
+    [2] = {"trinket", "Trinket", "misc/achievement-frames/frame-4-sky.png"},
+    [3] = {"amulet",  "Amulet",  "misc/achievement-frames/frame-3-jade.png"},
+}
 
 -- Equip trait
 EQUIP_TRAIT = {
