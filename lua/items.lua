@@ -71,8 +71,8 @@ end
 -- get item from storage
 -- item is removed from storage once this is called
 function get_item_from_storage(item_type, item_num, remove)
-    var_name = 'stored_'..item_type..'s['..item_num..']'
-    item_obj = wml.variables[var_name..'.object']
+    local var_name = 'stored_'..item_type..'s['..item_num..']'
+    local item_obj = wml.variables[var_name..'.object']
     if remove then
         wesnoth.wml_actions.clear_variable{name = var_name}
     end
@@ -86,8 +86,8 @@ end
 
 -- get item from unit
 function get_item_from_unit(curr_unit, item_type, remove)
-    var_name = item_type..'.object'
-    item = curr_unit.variables[var_name]
+    local var_name = item_type..'.object'
+    local item = curr_unit.variables[var_name]
     if remove then
         curr_unit.variables[item_type] = nil
         curr_unit:remove_modifications({id = item.id})
@@ -102,7 +102,7 @@ end
 
 -- add an item to the storage
 function add_item_to_storage(item_type, item)
-    var_name = 'stored_'..item_type..'s'
+    local var_name = 'stored_'..item_type..'s'
     wesnoth.wml_actions.set_variables{
         name = var_name,
         mode = "append",
@@ -168,7 +168,7 @@ function inventory_init(dialog)
     end
 
     -- Add items to the treeview
-    items_count = 0
+    local items_count = 0
     for i=0,3 do
         local len = wml.variables['stored_'..ITEM_TYPES[i][1]..'s.length']
         items_count = items_count + len
@@ -333,7 +333,7 @@ function wesnoth.wml_actions.put_item(cfg)
     wesnoth.interface.add_item_image(cfg.x, cfg.y, cfg.image)
     --gui.alert(wesnoth.as_text(wml.get_child(wml.parsed(cfg), "filter")))
     --filter = {x = cfg.x, y = cfg.y, race = cfg.race, level = cfg.level},
-    child, _ = wml.get_child(wml.parsed(cfg), "filter")
+    local child, _ = wml.get_child(wml.parsed(cfg), "filter")
     wesnoth.game_events.add{
         name = 'moveto',
         id = cfg.id..'_pickup_event',
